@@ -1,7 +1,46 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QTextEdit, QComboBox, QPushButton, QMainWindow, QLabel
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QPalette, QBrush
+from PyQt5.QtCore import QSize, Qt
 import urllib.request
+
+class Parser():
+	def __init__(self):
+		self.widget = Widget()
+		self.widget.save_button.clicked.connect(self.on_save_button_click)
+
+		self.work_parser()
+
+	def work_parser(self):
+		#тут ты что то делаешь, получаешь данные и выводишь их в поля
+		self.widget.date_publish.setText("4120984")
+		self.widget.author.setText("412098wetwet")
+		self.widget.original_title_post.setText("4120984wet")
+		self.widget.translate_ABZAC.setText("41209rewsgd84")
+		self.widget.translate_title_yandex_api.setText("4120wetwg984")
+		self.widget.likes.setText("4120wetg84")
+
+	def get_values(self):
+		#тут ты получаешь данные из полей и с ними что то делаешь
+		self.values_date_publish = self.widget.date_publish.text()
+		
+	#сейчас допишу единственный нюанс кнопку сохранить она тебе пригодится мб
+	def on_save_button_click(self):
+		self.get_values()
+		self.save_values()
+		self.clear()
+
+	def save_values(self):
+		self.values_date_publish = ' тут както сохраняешь значения или отправляешь'
+
+	def clear(self):
+		self.widget.date_publish.setText("")
+		self.widget.author.setText("")
+		self.widget.original_title_post.setText("")
+		self.widget.translate_ABZAC.setText("")
+		self.widget.translate_title_yandex_api.setText("")
+		self.widget.likes.setText("")
+
 
 class WidgetImage(QWidget):
 	"""docstring for WidgetImage"""
@@ -94,6 +133,10 @@ class Widget(QMainWindow):
 		self.image_url_button.resize(280, 40)
 		self.image_url_button.clicked.connect(self.on_click_image)
 
+		self.save_button = QPushButton("сохранить",self)
+		self.save_button.move(20, 570)
+		self.save_button.resize(280, 40)
+
 		self.short_ABZAC = QTextEdit(self) #ABZAC :D
 		self.short_ABZAC.move(320, 20)
 		self.short_ABZAC.resize(450, 270)
@@ -104,18 +147,22 @@ class Widget(QMainWindow):
 		self.translate_ABZAC.resize(450, 270)
 		self.translate_ABZAC.setPlaceholderText("перевод абзаца")
 
+		
+
 		self.show()
 
 	
 	def on_click_image(self):
 		self.image_widget = WidgetImage()
 		self.image_data = urllib.request.urlopen(self.image_url.text()).read()
-		self.pixmap = QPixmap()
+		self.pixmap = QImage()
 		self.pixmap.loadFromData(self.image_data)
-		self.image_widget.image = QLabel(self.image_widget)
-		self.image_widget.image.resize(400, 400)
+		self.pixmap = self.pixmap.scaled(400, 400, Qt.KeepAspectRatio)
+		self.image_widget.image = QPalette()
+		self.image_widget.image.setBrush(10, QBrush(self.pixmap))
+		self.image_widget.setPalette(self.image_widget.image)
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
-	widget = Widget()
+	parser = Parser()
 	sys.exit(app.exec_())
